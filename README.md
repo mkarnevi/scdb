@@ -1,7 +1,16 @@
-## The Sketch Comedy Database
+## The Comedy Database
 
-The code behind [www.SketchTV.lol](https://www.sketchtv.lol).
-If you find this code useful, please give back by adding your favorite sketch!
+A fork of [swax/SCDB](https://github.com/swax/SCDB), the code behind [www.SketchTV.lol](https://www.sketchtv.lol), extended to cover **panel shows** as well as sketch shows, and to play **local video collections** from your own server instead of only YouTube and other video sites.
+
+What the fork adds:
+
+- **Panel shows** alongside sketch shows. Each show has a format, and panel shows call their segments "rounds" and have Captain and Panellist roles.
+- **Segments inside full episodes.** A sketch or round can have a start and end time within its video.
+- **Local video files** play in a built-in player that starts at the segment, pauses at its end and shows the episode's other segments as markers.
+
+See [Panel shows and local video](#panel-shows-and-local-video-fork-additions) for setup. Everything else works as in the original project.
+
+All credit for the original database and site goes to swax. If you like sketch comedy, add your favourite sketch at [SketchTV.lol](https://www.sketchtv.lol)!
 
 ### Technologies
 
@@ -45,6 +54,7 @@ Existing rows default to null; they have no recorded request, regardless of thei
 - **Segment times:** a segment can have a start and end time inside its video, entered as `12:34` or `1:02:03`. YouTube embeds play just that range.
 - **Local video:** a video URL that is a path on this site (`/media/ep1.mp4`) or a direct link to a video file plays in a built-in player. It starts at the segment, pauses at its end, and shows the episode's other segments in the same file as markers on the progress bar.
 - **Database:** apply `database/sql/scripts/add_panel_show_support.sql` before deploying.
+- **First admin:** new accounts start with no editing rights. Sign in once with Google, then promote yourself in the database: `UPDATE "user" SET role = 'Admin' WHERE email = 'you@example.com';`. From then on you can change other users' roles from their profile pages. Leave `MIN_EDIT_ROLE` empty unless you want to pause editing.
 
 Serve the video files next to the app with range requests, for example with Caddy:
 
