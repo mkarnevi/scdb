@@ -1,4 +1,5 @@
 import AccordionHeader from "@/app/components/AccordionHeader";
+import { segmentLabel } from "@/shared/segmentLabel";
 import { ContentLink } from "@/app/components/ContentLink";
 import DescriptionPanel from "@/app/components/DescriptionPanel";
 import LinksPanel from "@/app/components/LinksPanel";
@@ -90,6 +91,13 @@ export default function SketchPageBody({
         title={sketch.title}
         image_cdn_key={sketch.image?.cdn_key}
         videoUrls={sketch.video_urls}
+        playback={{
+          startSeconds: sketch.start_seconds,
+          endSeconds: sketch.end_seconds,
+          currentSegmentId: sketch.id,
+          segments: sketch.episode?.sketches,
+          segmentLabel: segmentLabel(sketch.show.format),
+        }}
       />
       {!!sketch.recurring_sketch &&
         sketch.recurring_sketch._count.sketches > 1 && (

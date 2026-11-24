@@ -1,4 +1,5 @@
 import { ContentLink } from "@/app/components/ContentLink";
+import { segmentLabel } from "@/shared/segmentLabel";
 import DescriptionPanel from "@/app/components/DescriptionPanel";
 import LinksPanel from "@/app/components/LinksPanel";
 import MuiNextLink from "@/app/components/MuiNextLink";
@@ -43,7 +44,7 @@ export async function generateMetadata({
   const title = buildPageTitle(
     `${recurringSketch.title} - ${recurringSketch.show.title} Recurring`,
   );
-  const description = `Comedy sketches in the '${recurringSketch.title}' series on ${recurringSketch.show.title}`;
+  const description = `Comedy ${segmentLabel(recurringSketch.show.format, { plural: true, lowercase: true })} in the '${recurringSketch.title}' series on ${recurringSketch.show.title}`;
   const sketches = await getCachedRecurringSketchGrid(recurringSketch.id);
 
   return buildPageMeta(
@@ -80,6 +81,8 @@ export default async function RecurringSketchPage({ params }: SlugPageProps) {
   }
 
   const sketchData = await getCachedRecurringSketchGrid(recurringSketch.id);
+  const format = recurringSketch.show.format;
+  const segmentsLabel = segmentLabel(format, { plural: true });
 
   // Rendering
   return (
@@ -90,15 +93,19 @@ export default async function RecurringSketchPage({ params }: SlugPageProps) {
         </Typography>
         <Typography component="div" variant="subtitle1" color="textSecondary">
           <MuiNextLink href={"/recurring-sketches"} prefetch={false}>
-            Recurring Sketch
+            Recurring {segmentLabel(format)}
           </MuiNextLink>
           {" on "}
           <ContentLink mui table="show" entry={recurringSketch.show} />
         </Typography>
       </Box>
       <DescriptionPanel description={recurringSketch.description} />
-      <Suspense fallback={<div>Loading sketches...</div>}>
-        <SketchGrid initialData={sketchData} getData={getSketchData} />
+      <Suspense fallback={<div>Loading {segmentsLabel.toLowerCase()}...</div>}>
+        <SketchGrid
+          initialData={sketchData}
+          getData={getSketchData}
+          title={segmentsLabel}
+        />
       </Suspense>
       <LinksPanel link_urls={recurringSketch.link_urls} />
       <DateGeneratedFooter genDate={new Date()} type="page" />

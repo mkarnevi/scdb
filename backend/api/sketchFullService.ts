@@ -291,6 +291,10 @@ export async function resolveFullInput(
   if (input.recurring_sketch !== undefined)
     sketchInput.recurring_sketch_id = recurringSketchId ?? null;
   if (input.video_urls !== undefined) sketchInput.video_urls = input.video_urls;
+  if (input.start_seconds !== undefined)
+    sketchInput.start_seconds = input.start_seconds ?? null;
+  if (input.end_seconds !== undefined)
+    sketchInput.end_seconds = input.end_seconds ?? null;
   if (input.teaser !== undefined) sketchInput.teaser = input.teaser ?? null;
   if (input.synopsis !== undefined)
     sketchInput.synopsis = input.synopsis ?? null;

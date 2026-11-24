@@ -1,4 +1,5 @@
 import AccordionHeader from "@/app/components/AccordionHeader";
+import { segmentLabel } from "@/shared/segmentLabel";
 import { ContentLink } from "@/app/components/ContentLink";
 import LinksPanel from "@/app/components/LinksPanel";
 import DateGeneratedFooter from "@/app/footer/DateGeneratedFooter";
@@ -53,7 +54,7 @@ export async function generateMetadata({
   const title = buildPageTitle(
     `Season ${season.number} - ${season.show.title} ${season.year}`,
   );
-  const description = `Comedy sketches from the ${season.year} ${season.show.title} season ${season.number}`;
+  const description = `Comedy ${segmentLabel(season.show.format, { plural: true, lowercase: true })} from the ${season.year} ${season.show.title} season ${season.number}`;
   const sketches = await getCachedSeasonSketchGrid(season.id);
 
   return buildPageMeta(
@@ -87,6 +88,7 @@ export default async function SeasonPage({ params }: SlugPageProps) {
   }
 
   const sketchData = await getCachedSeasonSketchGrid(season.id);
+  const segmentsLabel = segmentLabel(season.show.format, { plural: true });
 
   // Rendering
   return (
@@ -99,8 +101,12 @@ export default async function SeasonPage({ params }: SlugPageProps) {
           <ContentLink mui table="show" entry={season.show} />
         </Typography>
       </Box>
-      <Suspense fallback={<div>Loading sketches...</div>}>
-        <SketchGrid initialData={sketchData} getData={getSketchData} />
+      <Suspense fallback={<div>Loading {segmentsLabel.toLowerCase()}...</div>}>
+        <SketchGrid
+          initialData={sketchData}
+          getData={getSketchData}
+          title={segmentsLabel}
+        />
       </Suspense>
       {!!season.episodes.length && (
         <Accordion defaultExpanded>
@@ -119,7 +125,7 @@ export default async function SeasonPage({ params }: SlugPageProps) {
                 <TableRow>
                   <TableCell>Number</TableCell>
                   <TableCell>Date</TableCell>
-                  <TableCell>Sketches</TableCell>
+                  <TableCell>{segmentsLabel}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -33,6 +33,13 @@ export enum cast_role_type {
   Guest = "Guest",
   Host = "Host",
   Uncredited = "Uncredited",
+  Captain = "Captain",
+  Panellist = "Panellist",
+}
+
+export enum show_format_type {
+  Sketch = "Sketch",
+  Panel = "Panel",
 }
 
 export enum credit_role_type {
@@ -55,6 +62,7 @@ export const $Enums = {
   operation_type,
   gender_type,
   cast_role_type,
+  show_format_type,
   credit_role_type,
   checklist_status_type,
 };

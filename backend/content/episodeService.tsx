@@ -48,6 +48,7 @@ export async function getEpisode(id: number) {
               id: true,
               url_slug: true,
               title: true,
+              format: true,
             },
           },
         },
@@ -102,6 +103,8 @@ export async function getEpisodeSketchGrid(
     ),
     image_cdnkey: s.image?.cdn_key,
     video_urls: s.video_urls,
+    start_seconds: s.start_seconds,
+    end_seconds: s.end_seconds,
   }));
 
   return {

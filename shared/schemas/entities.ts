@@ -16,6 +16,12 @@ export const ShowInputSchema = z
       .nullish()
       .describe("Short name / abbreviation"),
     description: z.string().nullish().describe("Show description"),
+    format: z
+      .enum(["Sketch", "Panel"])
+      .default("Sketch")
+      .describe(
+        'Show format. "Sketch" for sketch shows, "Panel" for panel shows, where each segment is a round or game.',
+      ),
     link_urls: z
       .array(z.string())
       .nullish()

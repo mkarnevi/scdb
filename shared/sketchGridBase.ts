@@ -7,6 +7,9 @@ export interface SketchGridItem {
   subtitle?: React.ReactNode;
   image_cdnkey?: string;
   video_urls: string[];
+  /** Segment times within the video, for segments of a full episode */
+  start_seconds?: number | null;
+  end_seconds?: number | null;
 }
 
 export interface SketchGridData {
@@ -27,6 +30,8 @@ export const selectSketch = {
   title: true,
   site_rating: true,
   video_urls: true,
+  start_seconds: true,
+  end_seconds: true,
   image: {
     select: {
       cdn_key: true,

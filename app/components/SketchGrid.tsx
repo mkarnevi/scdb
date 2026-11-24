@@ -24,6 +24,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   SketchGridData,
+  SketchGridItem,
   SketchGridSearchOptions,
 } from "../../shared/sketchGridBase";
 import AccordionHeader from "../components/AccordionHeader";
@@ -62,7 +63,7 @@ export default function SketchGrid({
   const [loading, setLoading] = useState(false);
   const [prevUrlPage, setPrevUrlPage] = useState(urlPage);
   const isFirstRender = useRef(true);
-  const [playVideoUrls, setPlayVideoUrls] = useState<string[] | null>(null);
+  const [playSketch, setPlaySketch] = useState<SketchGridItem | null>(null);
 
   const [hideMinorRoles, setHideMinorRoles] = useState(false);
 
@@ -189,7 +190,7 @@ export default function SketchGrid({
                       onClickCapture={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        setPlayVideoUrls(sketch.video_urls);
+                        setPlaySketch(sketch);
                       }}
                     />
                   </ButtonBase>
@@ -284,10 +285,15 @@ export default function SketchGrid({
             }
           />
         )}
-        {!!playVideoUrls && (
+        {!!playSketch && (
           <VideoPlayer
-            videoUrls={playVideoUrls}
-            onClose={() => setPlayVideoUrls(null)}
+            videoUrls={playSketch.video_urls}
+            onClose={() => setPlaySketch(null)}
+            playback={{
+              startSeconds: playSketch.start_seconds,
+              endSeconds: playSketch.end_seconds,
+              currentSegmentId: playSketch.id,
+            }}
           />
         )}
       </AccordionDetails>

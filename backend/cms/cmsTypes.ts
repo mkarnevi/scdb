@@ -86,6 +86,8 @@ export type ListFieldCms = BaseFieldCms & {
 export type NumberFieldCms = BaseFieldCms & {
   type: "number";
   // Maybe do int vs float here
+  /** Stored as whole seconds, edited as a timecode like "1:23:45" */
+  timecode?: boolean;
   values?: Nullable<number>[];
 };
 

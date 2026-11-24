@@ -39,6 +39,27 @@ Existing rows default to null; they have no recorded request, regardless of thei
 - `GET /api/indexing/{id}` returns `{id, google_indexing_requested_at}`. The nullable timestamp is also returned in sketch list and detail responses.
 - The timestamp records when the confirmation was saved. Retrying true preserves it; false clears an incorrect mark. This API neither sends a request to Google nor verifies actual indexing.
 
+### Panel shows and local video (fork additions)
+
+- **Show format:** each show is a `Sketch` or `Panel` show. Panel shows call their segments "rounds" on show, season, episode and recurring pages, and offer `Captain`/`Panellist` cast roles. Internally every segment is still a `sketch` row.
+- **Segment times:** a segment can have a start and end time inside its video, entered as `12:34` or `1:02:03`. YouTube embeds play just that range.
+- **Local video:** a video URL that is a path on this site (`/media/ep1.mp4`) or a direct link to a video file plays in a built-in player. It starts at the segment, pauses at its end, and shows the episode's other segments in the same file as markers on the progress bar.
+- **Database:** apply `database/sql/scripts/add_panel_show_support.sql` before deploying.
+
+Serve the video files next to the app with range requests, for example with Caddy:
+
+```
+scdb.example.com {
+  handle_path /media/* {
+    root * /srv/comedy
+    file_server
+  }
+  handle {
+    reverse_proxy localhost:3000
+  }
+}
+```
+
 ### Resources
 
 The official website [www.sketchtv.lol](https://www.sketchtv.lol/)

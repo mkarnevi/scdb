@@ -1,4 +1,5 @@
 import AccordionHeader from "@/app/components/AccordionHeader";
+import { segmentLabel } from "@/shared/segmentLabel";
 import { ContentLink } from "@/app/components/ContentLink";
 import DescriptionPanel from "@/app/components/DescriptionPanel";
 import LinksPanel from "@/app/components/LinksPanel";
@@ -53,7 +54,9 @@ export async function generateMetadata({
   }
 
   const title = buildPageTitle(`${show.title}`);
-  const description = show.description || `Sketches from ${show.title}`;
+  const description =
+    show.description ||
+    `${segmentLabel(show.format, { plural: true })} from ${show.title}`;
   const sketches = await getCachedShowSketchGrid(show.id);
 
   return buildPageMeta(
@@ -82,6 +85,7 @@ export default async function ShowPage({ params }: SlugPageProps) {
   }
 
   const sketchData = await getCachedShowSketchGrid(show.id);
+  const segmentsLabel = segmentLabel(show.format, { plural: true });
 
   // Rendering
   return (
@@ -98,8 +102,12 @@ export default async function ShowPage({ params }: SlugPageProps) {
         </Typography>
       </Box>
       <DescriptionPanel description={show.description} />
-      <Suspense fallback={<div>Loading sketches...</div>}>
-        <SketchGrid initialData={sketchData} getData={getSketchData} />
+      <Suspense fallback={<div>Loading {segmentsLabel.toLowerCase()}...</div>}>
+        <SketchGrid
+          initialData={sketchData}
+          getData={getSketchData}
+          title={segmentsLabel}
+        />
       </Suspense>
       {!!show.seasons.length && (
         <Accordion defaultExpanded>
@@ -118,7 +126,7 @@ export default async function ShowPage({ params }: SlugPageProps) {
                 <TableRow>
                   <TableCell>Number</TableCell>
                   <TableCell>Year</TableCell>
-                  <TableCell>Sketches</TableCell>
+                  <TableCell>{segmentsLabel}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -42,6 +42,7 @@ export async function getShow(id: number) {
       url_slug: true,
       title: true,
       short_name: true,
+      format: true,
       link_urls: true,
       description: true,
       seasons: {
@@ -110,6 +111,8 @@ export async function getShowSketchGrid(
     ),
     image_cdnkey: s.image?.cdn_key,
     video_urls: s.video_urls,
+    start_seconds: s.start_seconds,
+    end_seconds: s.end_seconds,
   }));
 
   return {

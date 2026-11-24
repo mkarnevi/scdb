@@ -2,16 +2,45 @@
 
 import CloseIcon from "@mui/icons-material/Close";
 import { Backdrop, Box, Chip, Typography } from "@mui/material";
+import {
+  isLocalVideoUrl,
+  VideoPlayback,
+  videoSourceLabel,
+} from "@/shared/localVideo";
 import { useMemo, useState } from "react";
 import { useWindowSize } from "react-use";
 import MuiNextLink from "./MuiNextLink";
+import LocalVideoPlayer from "./video/LocalVideoPlayer";
 
 interface VideoPlayerProps {
   videoUrls: string[];
   onClose: () => void;
+  /** Segment start/end and the episode's other segments, when known */
+  playback?: VideoPlayback;
 }
 
-function deriveVideoInfo(url: string): { videoUrl: string; provider: string } {
+/** Adds YouTube's start/end parameters so embeds play just the segment */
+export function withYouTubeSegment(
+  embedUrl: string,
+  playback?: VideoPlayback,
+): string {
+  const start = playback?.startSeconds;
+  const end = playback?.endSeconds;
+  if (start == null && end == null) return embedUrl;
+
+  const url = new URL(embedUrl);
+  if (start != null) url.searchParams.set("start", String(start));
+  if (end != null) url.searchParams.set("end", String(end));
+  return url.toString();
+}
+
+export function deriveVideoInfo(url: string): {
+  videoUrl: string;
+  provider: string;
+} {
+  if (isLocalVideoUrl(url)) {
+    return { videoUrl: url, provider: "local" };
+  }
   if (url.startsWith("https://www.youtube.com/embed/")) {
     return { videoUrl: url, provider: "youtube" };
   }
@@ -55,7 +84,11 @@ function deriveVideoInfo(url: string): { videoUrl: string; provider: string } {
   return { videoUrl: url, provider: "" };
 }
 
-export default function VideoPlayer({ videoUrls, onClose }: VideoPlayerProps) {
+export default function VideoPlayer({
+  videoUrls,
+  onClose,
+  playback,
+}: VideoPlayerProps) {
   // Hooks
   const [selectedUrl, setSelectedUrl] = useState(videoUrls[0]);
   const { videoUrl, provider } = useMemo(
@@ -94,6 +127,16 @@ export default function VideoPlayer({ videoUrls, onClose }: VideoPlayerProps) {
         }}
       >
         <Box style={{ flex: 1, margin: "auto" }}>
+          {provider == "local" && (
+            <LocalVideoPlayer
+              key={videoUrl}
+              src={videoUrl}
+              playback={playback}
+              width={width}
+              height={height}
+            />
+          )}
+
           {provider == "reddit" && (
             <div>
               {/* The div above prevents an error with unmounting this block */}
@@ -145,7 +188,11 @@ export default function VideoPlayer({ videoUrls, onClose }: VideoPlayerProps) {
             <iframe
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              src={videoUrl}
+              src={
+                provider == "youtube"
+                  ? withYouTubeSegment(videoUrl, playback)
+                  : videoUrl
+              }
               style={{ border: "1px solid #222", background: "black" }}
               width={width}
               height={height}
@@ -188,7 +235,7 @@ export default function VideoPlayer({ videoUrls, onClose }: VideoPlayerProps) {
                 <Chip
                   clickable={url == selectedUrl ? false : true}
                   key={index}
-                  label={new URL(url).hostname}
+                  label={videoSourceLabel(url)}
                   onClick={() => setSelectedUrl(url)}
                   style={{ margin: "5px" }}
                   variant={url == selectedUrl ? "filled" : "outlined"}

@@ -47,6 +47,7 @@ export async function getRecurringSketch(id: number) {
           title: true,
           id: true,
           url_slug: true,
+          format: true,
         },
       },
     },
@@ -106,6 +107,8 @@ export async function getRecurringSketchGrid(
     ),
     image_cdnkey: s.image?.cdn_key,
     video_urls: s.video_urls,
+    start_seconds: s.start_seconds,
+    end_seconds: s.end_seconds,
   }));
 
   return {

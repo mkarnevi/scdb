@@ -17,6 +17,14 @@ const showCms: TableCms = {
       optional: true,
     },
     {
+      label: "Format",
+      column: "format",
+      type: "enum",
+      enum: "show_format_type",
+      helperText:
+        "Panel shows call their segments rounds and use Captain/Panellist roles",
+    },
+    {
       label: "Description",
       column: "description",
       type: "string",

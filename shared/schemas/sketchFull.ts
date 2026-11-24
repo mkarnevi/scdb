@@ -2,7 +2,14 @@ import { z } from "zod";
 import { positiveId, positiveInt } from "./common";
 import { publicEditorialText } from "./editorialText";
 
-const CAST_ROLES = ["Cast", "Guest", "Host", "Uncredited"] as const;
+const CAST_ROLES = [
+  "Cast",
+  "Guest",
+  "Host",
+  "Uncredited",
+  "Captain",
+  "Panellist",
+] as const;
 const CREDIT_ROLES = ["Writer", "Director", "Musician", "Other"] as const;
 
 export const SketchFullCastInputSchema = z
@@ -29,7 +36,8 @@ export const SketchFullCastInputSchema = z
       .describe(
         "Actor's role type in the production — NOT the character name. " +
           'Use "Host" for the episode host, "Cast" for regular/featured cast, ' +
-          '"Guest" for guest appearances, "Uncredited" for uncredited roles.',
+          '"Guest" for guest appearances, "Uncredited" for uncredited roles. ' +
+          'For panel shows, use "Captain" for team captains and "Panellist" for panellists.',
       ),
     minor_role: z
       .boolean()
@@ -92,6 +100,20 @@ const SketchFullInputBase = z.object({
       'Recurring sketch name (resolved by lookup). Example: "Star Wars Undercover Boss"',
     ),
   video_urls: z.array(z.string()).optional().describe("Video URLs"),
+  start_seconds: z
+    .number()
+    .int()
+    .nonnegative()
+    .nullish()
+    .describe(
+      "Segment start, in seconds from the start of the video. For segments inside a full episode file.",
+    ),
+  end_seconds: z
+    .number()
+    .int()
+    .positive()
+    .nullish()
+    .describe("Segment end, in seconds from the start of the video."),
   teaser: publicEditorialText.optional().describe("Public short teaser text"),
   synopsis: publicEditorialText
     .optional()
