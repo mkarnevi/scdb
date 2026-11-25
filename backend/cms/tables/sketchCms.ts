@@ -65,13 +65,32 @@ const sketchCms: TableCms = {
       type: "image",
       preview: ["wide"],
       navProp: "image",
+      // Optional so local setups without S3 can still add segments;
+      // pages fall back to a placeholder image
+      optional: true,
+      helperText: "Optional. Uploading needs S3 to be configured",
     },
     {
       label: "Video URLs",
       column: "video_urls",
       helperText:
-        "Supports: YouTube, Vimeo, TikTok, Reddit, Facebook or Internet Archive URLs",
+        "Supports: YouTube, Vimeo, TikTok, Reddit, Facebook, Internet Archive or local video file URLs",
       type: "list",
+    },
+    {
+      label: "Segment Start",
+      column: "start_seconds",
+      type: "number",
+      timecode: true,
+      optional: true,
+      helperText: "For a segment inside a full episode, e.g. 12:34 or 1:02:03",
+    },
+    {
+      label: "Segment End",
+      column: "end_seconds",
+      type: "number",
+      timecode: true,
+      optional: true,
     },
     {
       label: "Teaser",

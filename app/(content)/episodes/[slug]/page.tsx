@@ -1,4 +1,5 @@
 import { ContentLink } from "@/app/components/ContentLink";
+import { segmentLabel } from "@/shared/segmentLabel";
 import LinksPanel from "@/app/components/LinksPanel";
 import DateGeneratedFooter from "@/app/footer/DateGeneratedFooter";
 import {
@@ -40,7 +41,7 @@ export async function generateMetadata({
     `Episode ${episode.number} - ${episode.season.lookup_slug}`,
   );
   const description =
-    `Comedy sketches from episode ${episode.number} of ${episode.season.lookup_slug}` +
+    `Comedy ${segmentLabel(episode.season.show.format, { plural: true, lowercase: true })} from episode ${episode.number} of ${episode.season.lookup_slug}` +
     (episode.air_date ? ` aired on ${toNiceDate(episode.air_date)}` : "");
   const sketches = await getCachedEpisodeSketchGrid(episode.id);
 
@@ -75,6 +76,9 @@ export default async function EpisodePage({ params }: SlugPageProps) {
   }
 
   const sketchData = await getCachedEpisodeSketchGrid(episode.id);
+  const segmentsLabel = segmentLabel(episode.season.show.format, {
+    plural: true,
+  });
 
   // Rendering
   return (
@@ -95,8 +99,12 @@ export default async function EpisodePage({ params }: SlugPageProps) {
           </Typography>
         )}
       </Box>
-      <Suspense fallback={<div>Loading sketches...</div>}>
-        <SketchGrid initialData={sketchData} getData={getSketchData} />
+      <Suspense fallback={<div>Loading {segmentsLabel.toLowerCase()}...</div>}>
+        <SketchGrid
+          initialData={sketchData}
+          getData={getSketchData}
+          title={segmentsLabel}
+        />
       </Suspense>
       <LinksPanel link_urls={episode.link_urls} />
       <DateGeneratedFooter genDate={new Date()} type="page" />

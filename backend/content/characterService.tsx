@@ -141,6 +141,8 @@ export async function getCharacterSketchGrid(
     ),
     image_cdnkey: sc.image?.cdn_key || sc.sketch.image?.cdn_key,
     video_urls: sc.sketch.video_urls,
+    start_seconds: sc.sketch.start_seconds,
+    end_seconds: sc.sketch.end_seconds,
   }));
 
   return {

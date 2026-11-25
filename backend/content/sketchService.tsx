@@ -62,7 +62,11 @@ export async function getYearList(searchParams: ListSearchParms) {
   }
 
   // Filter
-  if (searchParams.filterField && searchParams.filterValue && searchParams.filterOp) {
+  if (
+    searchParams.filterField &&
+    searchParams.filterValue &&
+    searchParams.filterOp
+  ) {
     const { filterField, filterValue, filterOp } = searchParams;
     const numVal = parseInt(filterValue);
     if (!isNaN(numVal)) {
@@ -102,7 +106,10 @@ export async function getYearList(searchParams: ListSearchParms) {
 
   const count = years.length;
   const { page, pageSize } = searchParams;
-  const list = years.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
+  const list = years.slice(
+    (page - 1) * pageSize,
+    (page - 1) * pageSize + pageSize,
+  );
 
   return { list, count, dateGenerated: new Date() };
 }
@@ -140,6 +147,8 @@ export async function getYearSketchGrid(
     ),
     image_cdnkey: s.image?.cdn_key,
     video_urls: s.video_urls,
+    start_seconds: s.start_seconds,
+    end_seconds: s.end_seconds,
   }));
 
   return {
@@ -207,11 +216,14 @@ export async function getSketch(id: number) {
         },
       },
       video_urls: true,
+      start_seconds: true,
+      end_seconds: true,
       show: {
         select: {
           id: true,
           url_slug: true,
           title: true,
+          format: true,
         },
       },
       season: {
@@ -228,6 +240,19 @@ export async function getSketch(id: number) {
           url_slug: true,
           number: true,
           air_date: true,
+          // The episode's segments, for markers when they share a video file
+          sketches: {
+            select: {
+              id: true,
+              title: true,
+              url_slug: true,
+              start_seconds: true,
+              end_seconds: true,
+              video_urls: true,
+            },
+            where: { start_seconds: { not: null } },
+            orderBy: { start_seconds: "asc" },
+          },
         },
       },
       recurring_sketch: {

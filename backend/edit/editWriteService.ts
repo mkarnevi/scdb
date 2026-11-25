@@ -1,6 +1,7 @@
 import prisma, { getPrismaModel } from "@/database/prisma";
 import { operation_type, user_role_type } from "@/shared/enums";
 import { contentResponse } from "@/shared/serviceResponse";
+import { validateSegmentTimes } from "@/shared/timecode";
 import { slugifyForUrl } from "@/shared/utilities";
 import { SessionUser } from "next-auth";
 import { validateRoleAtLeast } from "../actionHelper";
@@ -147,9 +148,26 @@ function validateRequiredFields(fields: FieldCms[], operation: operation_type) {
     }
   }
 
+  const segmentError = validateSegmentFields(fields);
+  if (segmentError) errors.push(segmentError);
+
   if (errors.length) {
     throw new Error(errors.join("\n"));
   }
+}
+
+/**
+ * Checks segment start/end when both are being written. When only one is
+ * changed, the database check constraint compares it with the stored value.
+ */
+function validateSegmentFields(fields: FieldCms[]) {
+  const valueOf = (column: string) => {
+    const field = fields.find((f) => f.column == column);
+    const value = field?.values?.[0];
+    return typeof value == "number" ? value : null;
+  };
+
+  return validateSegmentTimes(valueOf("start_seconds"), valueOf("end_seconds"));
 }
 
 /**

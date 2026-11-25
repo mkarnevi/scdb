@@ -2,8 +2,16 @@
 
 import VideoPlayer from "@/app/components/VideoPlayer";
 import staticUrl from "@/shared/cdnHost";
+import { VideoPlayback, videoSourceLabel } from "@/shared/localVideo";
+import { formatTimecode } from "@/shared/timecode";
 import PlayCircleFilledTwoToneIcon from "@mui/icons-material/PlayCircleFilledTwoTone";
-import { Button, ButtonBase, ButtonGroup, Stack } from "@mui/material";
+import {
+  Button,
+  ButtonBase,
+  ButtonGroup,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -11,21 +19,14 @@ interface VideoHeroProps {
   title: string;
   image_cdn_key?: string;
   videoUrls?: string[];
-}
-
-function getHostname(url: string): string {
-  try {
-    return new URL(url).hostname.replace("www.", "");
-  } catch {
-    // If URL parsing fails, return a shortened version of the original string
-    return "Error parsing URL";
-  }
+  playback?: VideoPlayback;
 }
 
 export default function VideoHero({
   title,
   image_cdn_key,
   videoUrls,
+  playback,
 }: VideoHeroProps) {
   // Hooks
   const [playVideoUrls, setPlayVideoUrls] = useState<string[] | undefined>();
@@ -34,7 +35,7 @@ export default function VideoHero({
   const imgWidth = 350;
   const imgHeight = Math.floor(imgWidth * (9 / 16));
 
-  if (!image_cdn_key) {
+  if (!image_cdn_key && !videoUrls?.length) {
     return (
       <Image
         alt={title}
@@ -75,7 +76,11 @@ export default function VideoHero({
           )}
           <Image
             alt={title}
-            src={`${staticUrl}/${image_cdn_key}`}
+            src={
+              image_cdn_key
+                ? `${staticUrl}/${image_cdn_key}`
+                : "/images/sketch-placeholder.png"
+            }
             style={{ objectFit: "cover", borderRadius: 8 }}
             priority
             width={imgWidth}
@@ -85,6 +90,17 @@ export default function VideoHero({
 
         {videoUrls?.length ? (
           <>
+            {playback?.startSeconds != null && (
+              <Typography
+                variant="caption"
+                color="textSecondary"
+                style={{ marginTop: 8 }}
+              >
+                Starts at {formatTimecode(playback.startSeconds)}
+                {playback.endSeconds != null &&
+                  `, ends at ${formatTimecode(playback.endSeconds)}`}
+              </Typography>
+            )}
             <ButtonGroup style={{ marginTop: "16px" }} size="small">
               <Button
                 aria-controls="video-player-overlay"
@@ -105,7 +121,7 @@ export default function VideoHero({
                   target="_blank"
                   href={url}
                 >
-                  {getHostname(url)}
+                  {videoSourceLabel(url)}
                 </Button>
               ))}
             </ButtonGroup>
@@ -125,6 +141,7 @@ export default function VideoHero({
         <VideoPlayer
           videoUrls={playVideoUrls}
           onClose={() => setPlayVideoUrls(undefined)}
+          playback={playback}
         />
       )}
     </>
