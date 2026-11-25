@@ -65,6 +65,10 @@ const sketchCms: TableCms = {
       type: "image",
       preview: ["wide"],
       navProp: "image",
+      // Optional so local setups without S3 can still add segments;
+      // pages fall back to a placeholder image
+      optional: true,
+      helperText: "Optional. Uploading needs S3 to be configured",
     },
     {
       label: "Video URLs",
