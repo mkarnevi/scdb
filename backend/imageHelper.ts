@@ -1,6 +1,11 @@
 import { getLoggedInUser, validateRoleAtLeast } from "@/backend/actionHelper";
 import { authenticateApiRequest } from "@/backend/api/apiAuth";
 import ProcessEnv from "@/shared/ProcessEnv";
+import {
+  createLocalUploadPost,
+  isLocalImageStorage,
+  saveLocalImage,
+} from "./localImageStore";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { user_role_type } from "@/shared/enums";
@@ -47,6 +52,10 @@ export async function createPresignedUploadUrl(
   fileSize: number,
   mimeType: string,
 ) {
+  if (isLocalImageStorage()) {
+    return createLocalUploadPost(key, fileSize, mimeType);
+  }
+
   const client = new S3Client({
     region: ProcessEnv.NEXT_PUBLIC_AWS_REGION,
   });
@@ -90,6 +99,11 @@ export async function uploadToS3(
   body: Buffer,
   mimeType: string,
 ): Promise<void> {
+  if (isLocalImageStorage()) {
+    await saveLocalImage(key, body);
+    return;
+  }
+
   const client = new S3Client({
     region: ProcessEnv.NEXT_PUBLIC_AWS_REGION,
   });

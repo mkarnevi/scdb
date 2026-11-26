@@ -1,0 +1,28 @@
+# Mounts the Storage Box TV folder read-only at /mnt/tv for Caddy.
+# Install: cp deploy/rclone-tv.service /etc/systemd/system/ && mkdir -p /mnt/tv
+#          systemctl daemon-reload && systemctl enable --now rclone-tv
+# Needs rclone 1.60+ (--sftp-connections needs a recent rclone; remove it on older ones).
+
+[Unit]
+Description=Storage Box TV folder (read-only) at /mnt/tv
+Wants=network-online.target
+After=network-online.target
+Before=docker.service
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/rclone mount hetzner:TV /mnt/tv \
+  --config /root/.config/rclone/rclone.conf \
+  --read-only \
+  --allow-other \
+  --vfs-cache-mode full \
+  --vfs-cache-max-size 20G \
+  --vfs-cache-max-age 24h \
+  --dir-cache-time 1h \
+  --sftp-connections 4
+ExecStop=/bin/fusermount -uz /mnt/tv
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

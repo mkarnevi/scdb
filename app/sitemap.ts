@@ -5,6 +5,7 @@
  * Currently set to cache with a 10 minute revalidation
  */
 
+import { isPublicSite } from "@/shared/siteConfig";
 import { getSketchSitemap } from "@/backend/content/sketchService";
 import { MetadataRoute } from "next";
 import { unstable_cache } from "next/cache";
@@ -17,6 +18,7 @@ export function generateSitemaps() {
 } */
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (!isPublicSite) return [];
   return await getCachedSiteMap();
 }
 

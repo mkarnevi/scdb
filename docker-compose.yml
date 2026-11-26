@@ -1,0 +1,80 @@
+# Fork: self-hosting stack. See deploy/README.md for setup.
+#
+#   db     Postgres 17, data in a named volume
+#   app    the site, images in ./data/images
+#   caddy  in front: the site, plus /media from the Storage Box mount
+#
+# Only Caddy is reachable, on 127.0.0.1:8080. tailscale serve puts HTTPS
+# in front of it for your tailnet.
+
+name: scdb
+
+x-database-urls: &database-urls
+  DATABASE_POOLED_URL: postgresql://scdb:${POSTGRES_PASSWORD}@db:5432/scdb
+  DATABASE_SESSION_URL: postgresql://scdb:${POSTGRES_PASSWORD}@db:5432/scdb
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: scdb
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: scdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scdb -d scdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      target: runner
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      <<: *database-urls
+      IMAGE_STORAGE_DIR: /data/images
+    volumes:
+      - ./data/images:/data/images
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      # The Storage Box mount; rslave picks up remounts by the rclone service
+      - type: bind
+        source: ${MEDIA_DIR:-/mnt/tv}
+        target: /srv/media
+        read_only: true
+        bind:
+          propagation: rslave
+    depends_on:
+      - app
+
+  # First-time setup only: docker compose --profile tools run --rm tools ...
+  tools:
+    build:
+      context: .
+      target: tools
+    profiles: ["tools"]
+    environment:
+      <<: *database-urls
+      PRISMA_PUSH_PULL: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
+  caddy-data:
