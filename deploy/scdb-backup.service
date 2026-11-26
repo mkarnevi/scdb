@@ -1,0 +1,11 @@
+# Runs deploy/backup.sh. Adjust WorkingDirectory if the repo isn't in /opt/scdb.
+[Unit]
+Description=Comedy database backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/scdb
+EnvironmentFile=-/root/.config/scdb/backup.env
+ExecStart=/opt/scdb/deploy/backup.sh

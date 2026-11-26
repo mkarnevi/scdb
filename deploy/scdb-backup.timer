@@ -1,0 +1,12 @@
+# Install: cp deploy/scdb-backup.* /etc/systemd/system/
+#          systemctl daemon-reload && systemctl enable --now scdb-backup.timer
+[Unit]
+Description=Nightly comedy database backup
+
+[Timer]
+OnCalendar=*-*-* 03:30
+RandomizedDelaySec=30m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

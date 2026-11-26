@@ -1,4 +1,5 @@
 import { buildPageMeta } from "@/shared/metaBuilder";
+import { isPublicSite, siteUrl } from "@/shared/siteConfig";
 import { Container } from "@mui/material";
 import type { Viewport } from "next";
 import Script from "next/script";
@@ -22,7 +23,12 @@ export const metadata = buildPageMeta(
   ],
 );
 
-metadata.metadataBase = new URL("https://www.sketchtv.lol");
+metadata.metadataBase = new URL(
+  isPublicSite ? "https://www.sketchtv.lol" : siteUrl,
+);
+if (!isPublicSite) {
+  metadata.robots = { index: false, follow: false };
+}
 metadata.icons = {
   apple: "/images/scdb2.png",
 };
@@ -41,12 +47,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link
-          rel="sitemap"
-          type="application/xml"
-          href="https://www.sketchtv.lol/sitemap.xml"
-        />
-        {!isDevelopment && (
+        {isPublicSite && (
+          <link
+            rel="sitemap"
+            type="application/xml"
+            href="https://www.sketchtv.lol/sitemap.xml"
+          />
+        )}
+        {!isDevelopment && isPublicSite && (
           <>
             <Script
               async

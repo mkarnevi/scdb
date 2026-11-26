@@ -1,0 +1,31 @@
+# Fork: front door for the site and the video files.
+# Listens on :80 inside the container (127.0.0.1:8080 on the host);
+# tailscale serve adds HTTPS in front of it.
+
+{
+	admin off
+}
+
+:80 {
+	# Videos from the Storage Box, as /media/<path inside the TV folder>.
+	# Only browser-ready files: originals and .orig.mp4 masters stay hidden.
+	handle_path /media/* {
+		@playable {
+			path *.mp4 *.MP4 *.m4v *.webm
+			not path *.orig.mp4
+		}
+		handle @playable {
+			root * /srv/media
+			header Cache-Control "private, max-age=86400"
+			file_server
+		}
+		handle {
+			respond 404
+		}
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy app:3000
+	}
+}

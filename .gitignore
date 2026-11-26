@@ -43,3 +43,5 @@ database/generated
 !.claude/commands/
 .claude/commands/.env.scdb
 .codex
+# Fork: local image storage and self-hosting data
+/data

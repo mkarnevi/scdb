@@ -54,6 +54,9 @@ Existing rows default to null; they have no recorded request, regardless of thei
 - **Segment times:** a segment can have a start and end time inside its video, entered as `12:34` or `1:02:03`. YouTube embeds play just that range.
 - **Local video:** a video URL that is a path on this site (`/media/ep1.mp4`) or a direct link to a video file plays in a built-in player. It starts at the segment, pauses at its end, and shows the episode's other segments in the same file as markers on the progress bar.
 - **Database:** apply `database/sql/scripts/add_panel_show_support.sql` before deploying.
+- **Private by default:** no analytics, no search engine pings, and crawlers are told to stay out. Set `PUBLIC_SITE=true` for upstream's public-site behaviour.
+- **Local image storage:** set `IMAGE_STORAGE_DIR` and `NEXT_PUBLIC_STATIC_URL=/static` to store and serve uploads from disk instead of S3.
+- **Self-hosting:** Docker, Caddy, Tailscale and backups are covered in [deploy/README.md](deploy/README.md).
 - **First admin:** new accounts start with no editing rights. Sign in once with Google, then promote yourself in the database: `UPDATE "user" SET role = 'Admin' WHERE email = 'you@example.com';`. From then on you can change other users' roles from their profile pages. Leave `MIN_EDIT_ROLE` empty unless you want to pause editing.
 
 Serve the video files next to the app with range requests, for example with Caddy:

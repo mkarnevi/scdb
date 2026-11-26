@@ -1,5 +1,6 @@
 "use server";
 
+import { isPublicSite } from "@/shared/siteConfig";
 import { revalidateContent } from "@/app/contentBase";
 import { catchServiceErrors, getLoggedInUser } from "@/backend/actionHelper";
 import { TableCms } from "@/backend/cms/cmsTypes";
@@ -36,7 +37,7 @@ export default async function saveAction(table: TableCms, id: number) {
       revalidateContent(table.name, newSlug);
     }
 
-    // Notify bing/google of changes, skip if in dev mode
+    // Notify bing/google of changes, skip if in dev mode or a private site
     const slugPath = newSlug || slug;
 
     response.warnings ||= [];
@@ -47,7 +48,7 @@ export default async function saveAction(table: TableCms, id: number) {
       response.warnings.push(
         `No slug path to send for search index update. New Slug: ${newSlug}, Old Slug: ${slug}`,
       );
-    } else if (ProcessEnv.NODE_ENV != "development") {
+    } else if (ProcessEnv.NODE_ENV != "development" && isPublicSite) {
       // Update to use next/after once available in v15
       // https://nextjs.org/blog/next-15-rc#executing-code-after-a-response-with-nextafter-experimental
       const tablePath = table.name.replace("_", "-");
