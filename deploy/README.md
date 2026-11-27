@@ -41,7 +41,7 @@ cp deploy/env.example .env
 chmod 600 .env
 ```
 
-Fill in `.env`. `NEXTAUTH_URL` is the address from step 5, such as `https://hetzner-server1.your-tailnet.ts.net`. In the Google Cloud console, add `<NEXTAUTH_URL>/api/auth/callback/google` as an authorised redirect URI.
+Fill in `.env`. Every setting without a `#` in front is required. `deploy/init.sh` checks them and stops if one is missing. Generate `POSTGRES_PASSWORD` with `openssl rand -hex 24` and `NEXTAUTH_SECRET` with `openssl rand -hex 32`. If you change `.env` later, apply it with `docker compose up -d`: `docker compose restart` keeps the old values. `NEXTAUTH_URL` is the address from step 5, such as `https://hetzner-server1.your-tailnet.ts.net`. In the Google Cloud console, add `<NEXTAUTH_URL>/api/auth/callback/google` as an authorised redirect URI.
 
 ## 4. Start it
 
