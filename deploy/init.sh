@@ -6,6 +6,14 @@ cd "$(dirname "$0")/.."
 
 [[ -f .env ]] || { echo "Create .env first: cp deploy/env.example .env" >&2; exit 1; }
 
+# The password goes into a database URL, so it must not contain URL characters
+pw=$(grep -E '^POSTGRES_PASSWORD=' .env | tail -n1 | cut -d= -f2-)
+if [[ ! $pw =~ ^[A-Za-z0-9_-]+$ ]]; then
+  echo "POSTGRES_PASSWORD in .env must be letters, digits, - or _ only." >&2
+  echo "Make one with: openssl rand -hex 24" >&2
+  exit 1
+fi
+
 mkdir -p data/images
 chown 1000:1000 data/images   # the app runs as the image's node user
 
