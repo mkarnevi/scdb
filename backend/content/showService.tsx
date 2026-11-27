@@ -45,6 +45,16 @@ export async function getShow(id: number) {
       format: true,
       link_urls: true,
       description: true,
+      // Fork: recurring sketches/rounds, listed on the show page
+      recurring_sketches: {
+        select: {
+          id: true,
+          url_slug: true,
+          title: true,
+          _count: { select: { sketches: true } },
+        },
+        orderBy: [{ sketches: { _count: "desc" } }, { title: "asc" }],
+      },
       seasons: {
         select: {
           id: true,

@@ -16,6 +16,8 @@ export async function getRecurringSketchList(searchParams: ListSearchParms) {
       id: true,
       url_slug: true,
       title: true,
+      // Fork: the list mixes every show, so say which one
+      show: { select: { id: true, url_slug: true, title: true } },
       _count: {
         select: {
           sketches: true,

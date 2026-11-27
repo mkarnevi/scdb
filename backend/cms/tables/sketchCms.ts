@@ -50,7 +50,7 @@ const sketchCms: TableCms = {
       optional: true,
     },
     {
-      label: "Recurring Sketch",
+      label: "Recurring Series",
       column: "recurring_sketch_id",
       type: "lookup",
       optional: true,

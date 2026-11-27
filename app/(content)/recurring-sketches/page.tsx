@@ -10,8 +10,8 @@ import {
 import RecurringSketchesDataGrid from "./RecurringSketchesDataGrid";
 
 export const metadata: Metadata = {
-  title: buildPageTitle("Recurring Sketches"),
-  description: "A filterable list of recurring sketches",
+  title: buildPageTitle("Recurring Series"),
+  description: "A filterable list of recurring sketches and rounds",
 };
 
 export default async function RecurringSketchesPage(props: ListPageProps) {
@@ -28,6 +28,7 @@ export default async function RecurringSketchesPage(props: ListPageProps) {
     id: recurringSketch.id,
     title: recurringSketch.title,
     url_slug: recurringSketch.url_slug,
+    show: recurringSketch.show,
     sketches___count: recurringSketch._count.sketches,
   }));
 

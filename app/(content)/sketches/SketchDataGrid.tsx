@@ -85,7 +85,7 @@ export default function SketchDataGrid({
           size="small"
           style={{ marginLeft: 16 }}
         >
-          List Recurring Sketches
+          List Recurring Series
         </Button>
       }
     />
