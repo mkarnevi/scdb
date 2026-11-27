@@ -1,65 +1,55 @@
 "use client";
 
-import FacebookIcon from "@mui/icons-material/Facebook";
+import { siteDescription, siteName } from "@/shared/siteConfig";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import XIcon from "@mui/icons-material/X";
-import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import DiscordIcon from "./DiscordIcon";
+import { Box, IconButton, Link, Tooltip, Typography } from "@mui/material";
 
+// Fork: The Comedy Archive footer
 export default function AppFooter() {
   return (
     <Box
-      style={{
+      component="footer"
+      sx={{
+        mt: 6,
+        py: 4,
+        borderTop: "1px solid",
+        borderColor: "divider",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        paddingBottom: 32,
+        gap: 0.5,
       }}
     >
-      <Stack direction="row">
-        <Tooltip title="Discuss on Discord">
+      <Typography variant="body2" color="text.secondary">
+        {siteName} · {siteDescription}
+      </Typography>
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
+      >
+        Built on{" "}
+        <Link
+          color="secondary"
+          href="https://github.com/swax/SCDB"
+          target="_blank"
+          rel="noreferrer"
+        >
+          SCDB
+        </Link>{" "}
+        by swax
+        <Tooltip title="This fork on GitHub">
           <IconButton
-            aria-label="Discord Link"
-            href="https://discord.gg/UKE8gSYp"
-            color="inherit"
+            aria-label="This fork on GitHub"
+            href="https://github.com/mkarnevi/scdb"
             target="_blank"
+            rel="noreferrer"
+            size="small"
+            color="inherit"
           >
-            <DiscordIcon />
+            <GitHubIcon fontSize="small" />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Facebook">
-          <IconButton
-            aria-label="Facebook Link"
-            href="https://www.facebook.com/people/Sketchtvlol/61562875797683/"
-            color="inherit"
-            target="_blank"
-          >
-            <FacebookIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Follow on X/Twitter">
-          <IconButton
-            aria-label="X/Twitter Link"
-            href="https://x.com/sketchtvlol"
-            color="inherit"
-            target="_blank"
-          >
-            <XIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="View on GitHub">
-          <IconButton
-            aria-label="GitHub Link"
-            href="https://github.com/swax/SCDB"
-            color="inherit"
-            target="_blank"
-          >
-            <GitHubIcon />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-        SketchTV.lol™ 2026
       </Typography>
     </Box>
   );

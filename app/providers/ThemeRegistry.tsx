@@ -7,9 +7,54 @@ import { createTheme } from "@mui/material/styles";
 import { useServerInsertedHTML } from "next/navigation";
 import React from "react";
 
+// Fork: "Studio Floor" look for The Comedy Archive. Colours and fonts live
+// here and in shared/siteConfig.ts, so upstream merges stay small.
+const headingFont = '"Archivo Variable", "Archivo", "Arial Narrow", sans-serif';
+const heading = {
+  fontFamily: headingFont,
+  fontWeight: 800,
+  fontStretch: "80%",
+  letterSpacing: "0.01em",
+};
+
 const theme = createTheme({
   palette: {
     mode: "dark",
+    primary: { main: "#F5C518", contrastText: "#0E0F13" },
+    secondary: { main: "#3FC1D9", contrastText: "#0E0F13" },
+    background: { default: "#0E0F13", paper: "#171922" },
+    text: { primary: "#EDEDF2", secondary: "#B9BBC7" },
+    divider: "#262833",
+  },
+  shape: { borderRadius: 10 },
+  typography: {
+    fontFamily: '"Inter Variable", "Inter", system-ui, sans-serif',
+    h1: heading,
+    h2: heading,
+    h3: heading,
+    h4: heading,
+    h5: heading,
+    h6: { ...heading, fontWeight: 700 },
+    button: { textTransform: "none", fontWeight: 600 },
+  },
+  components: {
+    MuiAppBar: {
+      defaultProps: { elevation: 0, color: "transparent" },
+      styleOverrides: {
+        root: {
+          backgroundColor: "rgba(14, 15, 19, 0.92)",
+          backdropFilter: "blur(8px)",
+        },
+      },
+    },
+    MuiPaper: { styleOverrides: { root: { backgroundImage: "none" } } },
+    MuiLink: { defaultProps: { color: "secondary" } },
+    MuiChip: { styleOverrides: { root: { fontWeight: 500 } } },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: { backgroundColor: "#262833", fontSize: "0.8rem" },
+      },
+    },
   },
 });
 

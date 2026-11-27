@@ -1,3 +1,4 @@
+import { siteName } from "./siteConfig";
 import slugify from "slugify";
 
 export function slugifyForUrl(str: string) {
@@ -108,8 +109,6 @@ export function showAndLogError(error: unknown) {
 }
 
 export function buildPageTitle(subtitle?: string) {
-  const siteName = "SketchTV.lol";
-
   if (!subtitle) {
     return siteName;
   }
