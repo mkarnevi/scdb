@@ -35,6 +35,7 @@ export enum cast_role_type {
   Uncredited = "Uncredited",
   Captain = "Captain",
   Panellist = "Panellist",
+  RegularPanellist = "RegularPanellist",
 }
 
 export enum show_format_type {

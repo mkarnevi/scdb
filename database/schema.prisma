@@ -513,6 +513,7 @@ enum cast_role_type {
   Uncredited
   Captain
   Panellist
+  RegularPanellist
 }
 
 enum show_format_type {

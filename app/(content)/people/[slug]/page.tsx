@@ -169,7 +169,7 @@ export default async function PersonPage({ params }: SlugPageProps) {
         <SketchGrid
           initialData={sketchCastData}
           getData={getSketchCastData}
-          options={{ minorRolesFilter: true }}
+          options={{ minorRolesFilter: true, regularRolesFilter: true }}
         />
       </Suspense>
       <Suspense fallback={<div>Loading credits...</div>}>
