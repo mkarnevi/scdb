@@ -1,3 +1,4 @@
+import { siteName } from "@/shared/siteConfig";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import {
   getProfile,
@@ -29,7 +30,7 @@ export async function generateMetadata({
   return profile
     ? {
         title: buildPageTitle(`${profile.username}'s Profile`),
-        description: `The profile for ${profile.username} on SketchTV.lol`,
+        description: `The profile for ${profile.username} on ${siteName}`,
       }
     : {};
 }

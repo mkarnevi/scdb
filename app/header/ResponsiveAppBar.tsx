@@ -1,8 +1,10 @@
 "use client";
 
+import { segmentsLabel, siteName } from "@/shared/siteConfig";
 import ApiIcon from "@mui/icons-material/Api";
+import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import { Divider, LinearProgress, Stack, Tooltip } from "@mui/material";
+import { LinearProgress, Stack, Tooltip } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,60 +12,72 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { MouseEvent, useMemo, useState } from "react";
+import { MouseEvent, useState } from "react";
 import MuiNextLink from "../components/MuiNextLink";
 import usePageLoading from "../hooks/usePageLoading";
 import EditViewButton from "./EditViewButton";
 import UserMenu from "./UserMenu";
 
+// Fork: The Comedy Archive header ("Studio Floor" look)
+
+const YELLOW = "#F5C518";
+const CYAN = "#3FC1D9";
+
 const pages = [
-  {
-    label: "Categories",
-    color: "#FED73E",
-  },
-  {
-    label: "Characters",
-    color: "#FF7341",
-  },
-  {
-    label: "People",
-    color: "#FF3584",
-  },
-  {
-    label: "Shows",
-    color: "#47FF66",
-  },
-  {
-    label: "Sketches",
-    color: "#2ABFFF",
-  },
-  {
-    label: "Years",
-    color: "#B44AFF",
-  },
+  { label: "Shows", href: "/shows" },
+  { label: segmentsLabel, href: "/sketches" },
+  { label: "People", href: "/people" },
+  { label: "Characters", href: "/characters" },
+  { label: "Categories", href: "/categories" },
+  { label: "Years", href: "/years" },
 ];
+
+function Wordmark({ compact }: { compact?: boolean }) {
+  return (
+    <MuiNextLink
+      href="/"
+      aria-label={`${siteName} home`}
+      underline="none"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.25,
+        color: "text.primary",
+        fontFamily: '"Archivo Variable", "Archivo", sans-serif',
+        fontStretch: "75%",
+        fontWeight: 900,
+        fontSize: compact ? "1.15rem" : { xs: "0.92rem", sm: "1.35rem" },
+        letterSpacing: { xs: "0.01em", sm: "0.04em" },
+        textTransform: "uppercase",
+        whiteSpace: "nowrap",
+        "&:hover": { color: "text.primary" },
+      }}
+    >
+      <Box
+        component="span"
+        aria-hidden
+        sx={{ display: "inline-flex", gap: "3px" }}
+      >
+        <Box
+          component="span"
+          sx={{ width: 8, height: 22, bgcolor: YELLOW, borderRadius: "2px" }}
+        />
+        <Box
+          component="span"
+          sx={{ width: 8, height: 22, bgcolor: CYAN, borderRadius: "2px" }}
+        />
+      </Box>
+      {siteName}
+    </MuiNextLink>
+  );
+}
 
 function ResponsiveAppBar() {
   // Hooks
   const pageLoading = usePageLoading();
-
-  const pathname = usePathname();
+  const pathname = usePathname().toLowerCase();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-
-  const dividerColor = useMemo(() => {
-    const path = pathname.toLowerCase();
-
-    for (const page of pages) {
-      if (path.startsWith(`/${page.label.substring(0, 2).toLowerCase()}`)) {
-        return page.color;
-      }
-    }
-
-    return undefined;
-  }, [pathname]);
 
   // Event handlers
   function handleOpenNavMenu(event: MouseEvent<HTMLElement>) {
@@ -74,174 +88,136 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   }
 
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
+
   // Rendering
-  const funFont = `"Comic Sans MS", "Comic Neue", "Chalkboard", "Segoe Print", "Kristen ITC", "Caveat", sans-serif`;
-
-  const LogoHomeLink = (
-    <MuiNextLink href="/">
-      <Image
-        alt="Home"
-        style={{ objectFit: "cover", marginTop: "4px" }}
-        src="/images/logo2dark.webp"
-        priority
-        width={90}
-        height={45}
-      />
-    </MuiNextLink>
-  );
-
   return (
-    <AppBar aria-label="Page Header" position="sticky">
-      <Toolbar disableGutters variant="dense">
-        {/* Desktop left corner logo */}
-        <Box sx={{ flexGrow: 0, display: { xs: "none", sm: "block" } }}>
-          {LogoHomeLink}
-        </Box>
-
-        {/* Hamburger Menu */}
-        <Box sx={{ flexGrow: 1, display: { xs: "flex", sm: "none" } }}>
+    <AppBar
+      aria-label="Page Header"
+      position="sticky"
+      sx={{ borderBottom: "1px solid", borderColor: "divider" }}
+    >
+      <Toolbar
+        sx={{
+          gap: { xs: 0.5, sm: 2 },
+          px: { xs: 0.5, sm: 3 },
+          minHeight: { xs: 56, sm: 64 },
+        }}
+      >
+        {/* Hamburger menu on small screens */}
+        <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <IconButton
-            aria-label="Hamburger Menu"
+            aria-label="Open menu"
             aria-controls="hamburger-menu"
             aria-haspopup="true"
             onClick={handleOpenNavMenu}
             color="inherit"
           >
-            <Image
-              alt="Hamburger Menu"
-              style={{ objectFit: "cover" }}
-              src="/images/hamburger.webp"
-              priority
-              width={32}
-              height={32}
-            />
+            <MenuIcon />
           </IconButton>
           <Menu
-            aria-label="Hamburger Menu"
-            component="nav"
             id="hamburger-menu"
+            component="nav"
+            aria-label="Main"
             anchorEl={anchorElNav}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            transformOrigin={{ vertical: "top", horizontal: "left" }}
             keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
             open={Boolean(anchorElNav)}
             onClose={handleCloseNavMenu}
-            sx={{
-              display: { xs: "block", md: "none" },
-            }}
           >
-            {/* Hamburger menu items */}
-            {pages.map((page, i) => (
+            {pages.map((page) => (
               <MenuItem
-                key={i}
+                key={page.href}
                 component={MuiNextLink}
-                href={`/${page.label.toLowerCase()}`}
+                href={page.href}
                 prefetch={false}
-                tabIndex={i + 1}
+                onClick={handleCloseNavMenu}
+                selected={isActive(page.href)}
               >
-                <Typography
-                  textAlign="center"
-                  style={{
-                    color: page.color,
-                    fontFamily: funFont,
-                    fontWeight: "bold",
-                    fontSize: "1.0rem",
-                  }}
-                >
-                  {page.label}
-                </Typography>
+                {page.label}
               </MenuItem>
             ))}
           </Menu>
         </Box>
 
-        {/* Main header navigation links for desktop */}
+        <Wordmark />
+
+        {/* Main navigation on wider screens */}
         <Box
-          aria-label="primary navigation"
           component="nav"
-          sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}
+          aria-label="Main"
+          sx={{ display: { xs: "none", md: "flex" }, gap: 0.5, ml: 2 }}
         >
           {/*
-           * Set prefetch to false for header links because no data is brought down,
-           * waste of a request and counted as a cache miss
+           * Prefetch is off for header links: no data comes down, so it would be
+           * a wasted request and a cache miss
            */}
-          {pages.map((page, i) => (
-            <Button
-              component={MuiNextLink}
-              href={`/${page.label.toLowerCase()}`}
-              key={i}
-              prefetch={false}
-              style={{
-                color: page.color,
-                fontFamily: funFont,
-                fontWeight: "bold",
-                fontSize: "1.0rem",
-              }}
-            >
-              {page.label}
-            </Button>
-          ))}
+          {pages.map((page) => {
+            const active = isActive(page.href);
+            return (
+              <Button
+                key={page.href}
+                component={MuiNextLink}
+                href={page.href}
+                prefetch={false}
+                aria-current={active ? "page" : undefined}
+                sx={{
+                  color: active ? "text.primary" : "text.secondary",
+                  fontWeight: 500,
+                  fontSize: "0.95rem",
+                  borderRadius: 0,
+                  borderBottom: "2px solid",
+                  borderColor: active ? YELLOW : "transparent",
+                  "&:hover": { color: YELLOW, backgroundColor: "transparent" },
+                }}
+              >
+                {page.label}
+              </Button>
+            );
+          })}
         </Box>
 
-        {/* Centered logo on mobile */}
-        <Box
-          sx={{
-            display: { xs: "block", sm: "none" },
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
-          }}
-        >
-          {LogoHomeLink}
-        </Box>
-
-        {/* Right side header icons */}
-        <Stack direction="row" style={{ marginRight: 8 }}>
+        {/* Right side icons */}
+        <Stack direction="row" sx={{ ml: "auto", alignItems: "center" }}>
           <EditViewButton />
-          <Tooltip title="API Reference">
+          <Tooltip title={`Browse and filter ${segmentsLabel.toLowerCase()}`}>
             <IconButton
-              aria-label="API Reference"
+              aria-label={`Browse and filter ${segmentsLabel.toLowerCase()}`}
               component={MuiNextLink}
-              href="/api-reference"
-              color="inherit"
-            >
-              <ApiIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Search The Sketch Comedy Database">
-            <IconButton
-              aria-label="Search The Sketch Comedy Database"
-              href="https://www.sketchcomedydatabase.com"
+              href="/sketches"
               color="inherit"
             >
               <SearchIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="API reference">
+            <IconButton
+              aria-label="API reference"
+              component={MuiNextLink}
+              href="/api-reference"
+              color="inherit"
+              sx={{ display: { xs: "none", sm: "inline-flex" } }}
+            >
+              <ApiIcon />
             </IconButton>
           </Tooltip>
           <UserMenu />
         </Stack>
       </Toolbar>
 
-      {pageLoading ? (
+      {pageLoading && (
         <LinearProgress
           sx={{
-            backgroundColor: dividerColor,
-            height: "1px",
-            "& .MuiLinearProgress-bar": {
-              backgroundColor: "whitesmoke",
-            },
+            position: "absolute",
+            bottom: -1,
+            left: 0,
+            right: 0,
+            height: "2px",
+            backgroundColor: "transparent",
+            "& .MuiLinearProgress-bar": { backgroundColor: YELLOW },
           }}
-        />
-      ) : (
-        <Divider
-          component={"div"}
-          role=""
-          style={{ backgroundColor: dividerColor, height: "1px" }}
         />
       )}
     </AppBar>

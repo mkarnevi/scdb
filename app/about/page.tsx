@@ -1,3 +1,4 @@
+import { siteDescription, siteName } from "@/shared/siteConfig";
 import { buildPageTitle } from "@/shared/utilities";
 import { Box } from "@mui/material";
 import { Metadata } from "next";
@@ -5,9 +6,10 @@ import Markdown from "react-markdown";
 
 export const metadata: Metadata = {
   title: buildPageTitle("About"),
-  description: "About the SketchTV.lol website",
+  description: `About ${siteName}`,
 };
 
+// Fork: About page for The Comedy Archive
 export default function HelpPage() {
   // Rendering
   return (
@@ -16,45 +18,36 @@ export default function HelpPage() {
         <Markdown>{`
 # About
 
-SketchTV.lol is all about building a database of comedy sketches. 
-There's no place on the internet that catalogs individual sketches to make them easy to find by category, person, year, etc...
+${siteName} is ${siteDescription.charAt(0).toLowerCase()}${siteDescription.slice(1)}: shows, seasons and episodes, broken down into the sketches and rounds inside them, with the people who made them.
 
-Some sketches seem to be impossible to find anywhere. 
-Others are hidden across YouTube, TikTok, Reddit, Facebook, etc.. Let's find what we can so it's easier to share and enjoy.
+Sketch shows list their **sketches**; panel shows list their **rounds**. Across the whole site, both are called **segments**.
 
-If you'd like to help create an account to add your favorite sketches.
-We have a [Discord server](https://discord.gg/UKE8gSYp) as well if you want to collaborate;
-like trying to find and add sketches with a particular theme.
+### Adding content
 
-### Adding a Sketch
-
-* Once you've logged in there is a link at the bottom of the [sketch list](/sketches) page to add a new sketch
+* Create the show first, setting its format to Sketch or Panel, then its seasons and episodes
+* Segments are added from the editor at \`/edit/sketches\`, or with the *Add* link under the [segment list](/sketches)
 * Red fields on the form are required
-* There is a 'create' link in the show, season, character, etc.. drop downs to create those respective entries
+* The show, season and episode drop-downs have a *create* link for adding a missing one
 
-### Adding Images
+### Video
 
-* Sketch image
-  * Try to pick an image with the most characters in it
-* Cast images
-  * You can use the , and . keys to move the video frame by frame on YouTube to get the best screenshot
-  * The face of the character should be framed so that the face is in the upper half of the image with some margin on the sides
-    * ![image](/images/cast-img-framing.jpg) 
+* A segment's video can be a link to YouTube and similar sites, or a file from the archive's own storage, such as \`/media/Show/Season 01/Episode.mp4\` (spaces written as \`%20\`)
+* Segments inside a full episode get a start and end time, such as \`12:34\`. The player starts there, pauses at the end, and shows the episode's other segments as markers
 
-### Saving Changes
+### Images
 
-* After saving, the page update should be immediately. It can take up to 5 minutes for linked pages to be updated
-* To edit a sketch, click the pencil icon in the upper right
-* To view a sketch after saving, click the eye icon in the upper right
-  
+* Pick a segment image with as many of the cast in it as possible
+* For cast images, frame the face in the upper half with some margin at the sides
+  * ![Framing example](/images/cast-img-framing.jpg)
+
+### Saving changes
+
+* Pages update immediately after saving; linked pages can take up to 5 minutes
+* The pencil icon in the top bar opens the current page in the editor, and the eye icon goes back to viewing it
+
 ### Credits
 
-This site was created by [@swax](https://x.com/swax) as a fun open source side project.
-      
-The source code is available on [GitHub](https://github.com/swax/SCDB). 
-Discord is where we discuss new feature ideas and bug fixes. 
-It's also a great resource for learning how to build a full stack web application with Next.js, Prisma, and PostgreSQL.
-
+${siteName} runs on a fork of [SCDB](https://github.com/swax/SCDB), the open source code behind SketchTV.lol, created by swax. This fork adds panel shows, local video and private self-hosting; its code is on [GitHub](https://github.com/mkarnevi/scdb).
 `}</Markdown>
       </Box>
     </>

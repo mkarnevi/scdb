@@ -1,3 +1,4 @@
+import { siteName } from "./siteConfig";
 import { Metadata } from "next";
 import "server-only";
 import { sketchType } from "../app/(content)/sketches/[slug]/sketchTypes";
@@ -19,11 +20,10 @@ export function buildPageMeta(
       type: "website",
       locale: "en_US",
       url,
-      siteName: "SketchTV.lol",
+      siteName,
       images,
     },
     twitter: {
-      site: "@sketchtvlol",
       title,
       description,
       card: "summary_large_image",

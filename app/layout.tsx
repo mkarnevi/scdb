@@ -1,27 +1,24 @@
 import { buildPageMeta } from "@/shared/metaBuilder";
-import { isPublicSite, siteUrl } from "@/shared/siteConfig";
+import {
+  isPublicSite,
+  siteDescription,
+  siteName,
+  siteUrl,
+} from "@/shared/siteConfig";
 import { Container } from "@mui/material";
 import type { Viewport } from "next";
 import Script from "next/script";
 import { Suspense } from "react";
 import AppFooter from "./footer/AppFooter";
+import "@fontsource-variable/archivo/wdth.css";
+import "@fontsource-variable/inter";
 import "./globals.css";
 import ResponsiveAppBar from "./header/ResponsiveAppBar";
 import { NextAuthProvider } from "./providers/NextAuthProvider";
 import ThemeRegistry from "./providers/ThemeRegistry";
 
 /** Longer title important for SEO */
-export const metadata = buildPageMeta(
-  "SketchTV.lol - The Sketch Comedy Database",
-  "Discover new and trending comedy sketches here!",
-  "/",
-  [
-    {
-      url: "/images/logo2.webp",
-      alt: "SketchTV.lol logo",
-    },
-  ],
-);
+export const metadata = buildPageMeta(siteName, siteDescription, "/", []);
 
 metadata.metadataBase = new URL(
   isPublicSite ? "https://www.sketchtv.lol" : siteUrl,
@@ -29,9 +26,7 @@ metadata.metadataBase = new URL(
 if (!isPublicSite) {
   metadata.robots = { index: false, follow: false };
 }
-metadata.icons = {
-  apple: "/images/scdb2.png",
-};
+// Fork: icons come from app/icon.svg and app/apple-icon.png
 
 export const viewport: Viewport = {
   width: "device-width",

@@ -1,3 +1,4 @@
+import { siteName } from "@/shared/siteConfig";
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import { getAccount } from "@/backend/user/accountService";
 import { buildPageTitle } from "@/shared/utilities";
@@ -7,7 +8,7 @@ import AccountClientPage from "./page.client";
 
 export const metadata: Metadata = {
   title: buildPageTitle("My Account"),
-  description: "My SketchTV.lol account",
+  description: `My ${siteName} account`,
 };
 
 export default async function AccountPage() {
