@@ -1,4 +1,5 @@
 import { EnumFieldCms, FieldCms, isFieldEmpty } from "@/backend/cms/cmsTypes";
+import { enumNameToDisplayName } from "@/shared/utilities";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { $Enums } from "@/shared/enums";
 import { useId } from "react";
@@ -42,7 +43,7 @@ export default function EnumField({
         {Object.keys($Enums[field.enum as keyof typeof $Enums]).map(
           (value, i) => (
             <MenuItem key={i} value={value}>
-              {value}
+              {enumNameToDisplayName(value)}
             </MenuItem>
           ),
         )}

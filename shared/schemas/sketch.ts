@@ -9,6 +9,7 @@ const CAST_ROLES = [
   "Uncredited",
   "Captain",
   "Panellist",
+  "RegularPanellist",
 ] as const;
 const CREDIT_ROLES = ["Writer", "Director", "Musician", "Other"] as const;
 
@@ -108,7 +109,8 @@ export const CastInputSchema = z
         "Actor's role type in the production — NOT the character name. " +
           'Use "Host" for the episode host, "Cast" for regular/featured cast, ' +
           '"Guest" for guest appearances, "Uncredited" for uncredited roles. ' +
-          'For panel shows, use "Captain" for team captains and "Panellist" for panellists.',
+          'For panel shows, use "Captain" for team captains, "RegularPanellist" for panellists on most episodes ' +
+          'of a show without captains, and "Panellist" for guests.',
       ),
     minor_role: z
       .boolean()

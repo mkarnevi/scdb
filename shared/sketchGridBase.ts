@@ -20,7 +20,12 @@ export interface SketchGridData {
 
 export interface SketchGridSearchOptions {
   hideMinorRoles?: boolean;
+  /** Fork: hide captain and regular panellist appearances */
+  hideRegularRoles?: boolean;
 }
+
+/** Fork: panel show roles that repeat across most of a show's episodes */
+export const REGULAR_CAST_ROLES = ["Captain", "RegularPanellist"] as const;
 
 export const SKETCH_PAGE_SIZE = 12; // Looks even 4x3 and 6x2
 

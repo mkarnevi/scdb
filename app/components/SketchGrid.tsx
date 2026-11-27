@@ -41,7 +41,19 @@ interface SketchGridProps {
   icon?: React.ReactNode;
   options?: {
     minorRolesFilter?: boolean;
+    /** Fork: offer hiding captain and regular panellist appearances */
+    regularRolesFilter?: boolean;
   };
+}
+
+/** Only the filters that are switched on, or undefined when none are */
+function activeFilters(
+  filters: SketchGridSearchOptions,
+): SketchGridSearchOptions | undefined {
+  const on = Object.fromEntries(
+    Object.entries(filters).filter(([, value]) => value),
+  ) as SketchGridSearchOptions;
+  return Object.keys(on).length ? on : undefined;
 }
 
 export default function SketchGrid({
@@ -65,7 +77,7 @@ export default function SketchGrid({
   const isFirstRender = useRef(true);
   const [playSketch, setPlaySketch] = useState<SketchGridItem | null>(null);
 
-  const [hideMinorRoles, setHideMinorRoles] = useState(false);
+  const [filters, setFilters] = useState<SketchGridSearchOptions>({});
 
   // Helper functions
   function buildUrl(pageNum: number): string {
@@ -94,8 +106,7 @@ export default function SketchGrid({
       return;
     }
     let cancelled = false;
-    const options = hideMinorRoles ? { hideMinorRoles: true } : undefined;
-    void getData(urlPage, options).then((newData) => {
+    void getData(urlPage, activeFilters(filters)).then((newData) => {
       if (!cancelled) {
         setData(newData);
         setLoading(false);
@@ -120,14 +131,14 @@ export default function SketchGrid({
     router.push(url, { scroll: false });
   }
 
-  function handleChange_minorRolesFilter(
+  function handleChange_filter(
+    name: keyof SketchGridSearchOptions,
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
-    const newSetting = event.target.checked;
-    setHideMinorRoles(newSetting);
+    const newFilters = { ...filters, [name]: event.target.checked };
+    setFilters(newFilters);
     setLoading(true);
-    const options = newSetting ? { hideMinorRoles: true } : undefined;
-    void getData(urlPage, options).then((newData) => {
+    void getData(urlPage, activeFilters(newFilters)).then((newData) => {
       setData(newData);
       setLoading(false);
     });
@@ -279,8 +290,20 @@ export default function SketchGrid({
             label="Hide Minor Roles (No Lines)"
             control={
               <Checkbox
-                checked={hideMinorRoles}
-                onChange={handleChange_minorRolesFilter}
+                checked={!!filters.hideMinorRoles}
+                onChange={(e) => handleChange_filter("hideMinorRoles", e)}
+              />
+            }
+          />
+        )}
+        {options?.regularRolesFilter && (
+          <FormControlLabel
+            disabled={loading}
+            label="Hide Captain and Regular Panellist Roles"
+            control={
+              <Checkbox
+                checked={!!filters.hideRegularRoles}
+                onChange={(e) => handleChange_filter("hideRegularRoles", e)}
               />
             }
           />

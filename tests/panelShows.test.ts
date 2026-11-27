@@ -252,3 +252,30 @@ describe("enums match the database schema", () => {
     );
   });
 });
+
+describe("regular panel roles", () => {
+  test("Regular Panellist is a valid cast role everywhere", async () => {
+    const { cast_role_type: generated } =
+      await import("../database/generated/enums");
+    expect(Object.values(generated)).toContain("RegularPanellist");
+    expect(
+      SketchUpdateInputSchema.parse({
+        cast: [{ person_id: 1, role: "RegularPanellist" }],
+      }).cast?.[0].role,
+    ).toBe("RegularPanellist");
+  });
+
+  test("the roles hidden by the filter are all real cast roles", async () => {
+    const { REGULAR_CAST_ROLES } = await import("../shared/sketchGridBase");
+    for (const role of REGULAR_CAST_ROLES) {
+      expect(Object.values(cast_role_type)).toContain(role);
+    }
+    expect([...REGULAR_CAST_ROLES]).not.toContain("Host");
+  });
+
+  test("role names display with spaces", async () => {
+    const { enumNameToDisplayName } = await import("../shared/utilities");
+    expect(enumNameToDisplayName("RegularPanellist")).toBe("Regular Panellist");
+    expect(enumNameToDisplayName("Captain")).toBe("Captain");
+  });
+});

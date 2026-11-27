@@ -1,6 +1,7 @@
 import { ContentLink } from "@/app/components/ContentLink";
 import prisma from "@/database/prisma";
 import {
+  REGULAR_CAST_ROLES,
   SKETCH_PAGE_SIZE,
   SketchGridData,
   SketchGridSearchOptions,
@@ -114,6 +115,9 @@ export async function getPersonSketchCastGrid(
     where: {
       person_id: id,
       minor_role: options?.hideMinorRoles ? false : undefined,
+      role: options?.hideRegularRoles
+        ? { notIn: [...REGULAR_CAST_ROLES] }
+        : undefined,
     },
     select: {
       character_name: true,
@@ -150,6 +154,10 @@ export async function getPersonSketchCastGrid(
 
   if (options?.hideMinorRoles) {
     rawSql += ` AND minor_role = false`;
+  }
+  if (options?.hideRegularRoles) {
+    // Fixed values from REGULAR_CAST_ROLES, not user input
+    rawSql += ` AND role NOT IN (${REGULAR_CAST_ROLES.map((r) => `'${r}'`).join(", ")})`;
   }
 
   const distinctCount = await prisma.$queryRawUnsafe<{ count: number }[]>(
