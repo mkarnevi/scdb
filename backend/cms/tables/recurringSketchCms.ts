@@ -2,7 +2,7 @@ import { TableCms } from "../cmsTypes";
 
 const recurringSketch: TableCms = {
   name: "recurring_sketch",
-  label: "Recurring Sketch",
+  label: "Recurring Series",
   title: ["${title} - ${show.title}"],
   fields: [
     {

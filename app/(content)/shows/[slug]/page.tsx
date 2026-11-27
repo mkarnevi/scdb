@@ -19,11 +19,14 @@ import { getContentPath } from "@/shared/tableNames";
 import { buildPageTitle } from "@/shared/utilities";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import RepeatIcon from "@mui/icons-material/Repeat";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
+  Chip,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -102,6 +105,43 @@ export default async function ShowPage({ params }: SlugPageProps) {
         </Typography>
       </Box>
       <DescriptionPanel description={show.description} />
+      {!!show.recurring_sketches.length && (
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="series-content"
+            id="series-header"
+          >
+            <AccordionHeader icon={<RepeatIcon />}>
+              Recurring {segmentsLabel}
+            </AccordionHeader>
+          </AccordionSummary>
+          <AccordionDetails id="series-content">
+            <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
+              {show.recurring_sketches.map((series) => (
+                <Chip
+                  key={series.id}
+                  component={MuiNextLink}
+                  href={getContentPath("recurring-sketch", series.url_slug)}
+                  clickable
+                  variant="outlined"
+                  label={
+                    <>
+                      {series.title}
+                      <Box
+                        component="span"
+                        sx={{ ml: 1, color: "text.secondary" }}
+                      >
+                        {series._count.sketches}
+                      </Box>
+                    </>
+                  }
+                />
+              ))}
+            </Stack>
+          </AccordionDetails>
+        </Accordion>
+      )}
       <Suspense fallback={<div>Loading {segmentsLabel.toLowerCase()}...</div>}>
         <SketchGrid
           initialData={sketchData}
